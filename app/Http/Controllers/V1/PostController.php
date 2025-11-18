@@ -25,6 +25,15 @@ class PostController extends Controller
         ]);
     }
 
+    public function postComments()
+    {
+        $this->authorize('viewAny', Post::class);
+        $posts = Post::with('comments')->get();
+        return response()->json([
+            'data' => $posts
+        ]);
+    }
+
     public function store(PostStoreRequest $request)
     {
         $this->authorize('create', Post::class);
@@ -32,9 +41,18 @@ class PostController extends Controller
         $validated = $request->validated();
         $validated['user_id'] = auth()->id();
 
+        if ($request->hasFile('image_url')) {
+            $image = $request->file('image_url');
+            $extension = $image->getClientOriginalExtension();
+            $filename = str($validated['title'])->slug() . '-' . time() . '.' . $extension;
+            $path = $image->storeAs('posts', $filename, 'public');
+            $validated['image_url'] = $path;
+        }
+
         $post = Post::create($validated);
 
-        return response()->json(['message' => "Post $post->title created successfully"], 201);
+        return response()->json(['message' => "Post $post->title created successfully",
+            'post' => new PostResource($post)], 201);
     }
 
 
@@ -71,7 +89,7 @@ class PostController extends Controller
         $posts = Post::where('user_id', $user->id)->get();
 
         return response()->json([
-            'data' => new PostCollection($posts)
+            'data' => PostResource::collection($posts)
         ]);
     }
 
@@ -88,7 +106,7 @@ class PostController extends Controller
 
     public function recentPosts(Post $post)
     {
-//        $this->authorize('viewAny', $post);
+        $this->authorize('viewAny', $post);
         $posts = $post->latest()->take(5)->get();
 
         return response()->json([

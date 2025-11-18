@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\V1\CommentController;
 use App\Http\Controllers\V1\PostController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -31,5 +32,14 @@ Route::prefix('v1')->group(function () {
             Route::get('posts/recent', 'recentPosts');
         });
         Route::apiResource('posts', PostController::class);
+
+        Route::controller(CommentController::class)->group(function () {
+        Route::get('posts/{post}/comments', 'postComments');
+        Route::get('users/{user}/comments', 'getByUser');
+        Route::get('posts/{post}/comments', 'getByPost');
+        Route::post('comments/{parentComment}/reply' , 'reply');
+    });
+    Route::apiResource('comments', CommentController::class);
+
     });
 });

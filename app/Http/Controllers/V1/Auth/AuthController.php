@@ -69,7 +69,7 @@ class AuthController extends Controller
 //            $user->update(['avatar' => $avatarPath]);
 //        }
         $token = JWTAuth::fromUser($user);
-        Mail::to($user->email)->send(new WelcomeEmailMail($user));
+//        Mail::to($user->email)->send(new WelcomeEmailMail($user));
         return response()->json([
             'message' => 'User registered successfully',
             'user' => new UserResource($user),
@@ -140,8 +140,8 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Token refreshed successfully',
                 'token' => $newToken,
-                'user name' => $user->name,
-                'user email' => $user->email,
+                'name' => $user->name,
+                'email' => $user->email,
                 'username' => $user->username,
             ], 200);
         } catch (JWTException $e) {
