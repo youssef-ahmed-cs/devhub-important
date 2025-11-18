@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Observers\UserObserver;
+use Binafy\LaravelReaction\Traits\Reactor;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, softDeletes;
+    use HasFactory, Notifiable, softDeletes , Reactor;
 
     public function getJWTIdentifier()
     {
@@ -46,6 +47,7 @@ class User extends Authenticatable implements JWTSubject
         'created_at',
         'updated_at',
         'provider_id',
+        'otp'
     ];
 
     /**
@@ -79,5 +81,30 @@ class User extends Authenticatable implements JWTSubject
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+//    public function followers(): HasMany
+//    {
+//        return $this->hasMany(UserRelationship::class , 'followee_id');
+//    }
+//
+//    public function followees(): HasMany
+//    {
+//        return $this->hasMany(UserRelationship::class , 'follower_id');
+//    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'following_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Users who are following this user.
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'following_id', 'follower_id')
+            ->withTimestamps();
     }
 }

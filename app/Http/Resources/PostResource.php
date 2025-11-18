@@ -19,7 +19,7 @@ class PostResource extends JsonResource
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'image_url' => $this->image_url ? asset('storage/' . $this->image_url) : null,
-            'comments' => CommentResource::collection($this->whenLoaded('comments')),
+//            'comments' => CommentResource::collection($this->whenLoaded('comments')),
         ];
     }
 }

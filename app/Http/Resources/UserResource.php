@@ -16,14 +16,12 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'username' => $this->username,
             'role' => $this->role ?? 'user',
-            'avatar_url' => $this->avatar_url,
-            'bio' => $this->bio,
+            'image_url' => $this->avatar_url ? asset('storage/' . $this->avatar_url) : null,            'bio' => $this->bio,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'password' => $this->password,
-            'remember_token' => $this->remember_token,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
+            'Join At' => $this->created_at->format('Y-m-d H:i:s'),
+            'Last Update' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 }

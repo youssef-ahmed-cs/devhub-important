@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.3",
         "algolia/algoliasearch-client-php": "^4.35",
+        "binafy/laravel-reactions": "^1.0",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "*",

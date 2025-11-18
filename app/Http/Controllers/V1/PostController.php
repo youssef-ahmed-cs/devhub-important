@@ -8,6 +8,7 @@ use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\SearchPostResource;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,7 @@ class PostController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Post::class);
-        $posts = Post::with('user')->get();
+        $posts = Post::with(['user', 'tags'])->get();
         return response()->json([
             'data' => PostResource::collection($posts)
         ]);
@@ -29,6 +30,24 @@ class PostController extends Controller
     {
         $this->authorize('viewAny', Post::class);
         $posts = Post::with('comments')->get();
+        return response()->json([
+            'data' => $posts
+        ]);
+    }
+
+    public function postsTags()
+    {
+        $this->authorize('viewAny', Post::class);
+        $posts = Post::with('tags')->get();
+        return response()->json([
+            'data' => $posts
+        ]);
+    }
+
+    public function postTags(Post $post)
+    {
+        $this->authorize('viewAny', Post::class);
+        $posts = $post->load('tags');
         return response()->json([
             'data' => $posts
         ]);
@@ -54,7 +73,6 @@ class PostController extends Controller
         return response()->json(['message' => "Post $post->title created successfully",
             'post' => new PostResource($post)], 201);
     }
-
 
     public function show(Post $post)
     {
@@ -138,5 +156,25 @@ class PostController extends Controller
             'message' => 'Post restored successfully',
             'data' => new PostResource($post),
         ], 200);
+    }
+
+    public function attachTags(Request $request, Post $post)
+    {
+        $this->authorize('update', $post);
+        $request->validate(['tags' => 'required|array']);
+        $tags = collect($request->tags)->map(function ($tagName) {
+            return Tag::firstOrCreate(['name' => $tagName])->id;
+        });
+        $post->tags()->syncWithoutDetaching($tags);
+        return response()->json($post->load('tags'), 200);
+    }
+
+    public function detachTag(Post $post, Tag $tag)
+    {
+        $post->tags()->detach($tag);
+        return response()->json([
+            'message' => "Tag {$tag->name} detached from Post {$post->title} successfully",
+            $post->load('tags')
+        ]);
     }
 }
