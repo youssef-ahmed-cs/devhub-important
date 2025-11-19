@@ -141,6 +141,12 @@ return [
     | such as Memcached. You may define your connection settings here.
     |
     */
+//    'laravel-visits' => [
+//        'host' => env('REDIS_HOST', '127.0.0.1'),
+//        'password' => env('REDIS_PASSWORD', null),
+//        'port' => env('REDIS_PORT', 6379),
+//        'database' => 3, // anything from 1 to 15, except 0 (or what is set in default)
+//    ],
 
     'redis' => [
 
@@ -148,7 +154,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-database-'),
+            'prefix' => env('REDIS_PREFIX', Str::slug((string)env('APP_NAME', 'laravel')) . '-database-'),
             'persistent' => env('REDIS_PERSISTENT', false),
         ],
 

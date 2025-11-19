@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Models\Post;
-use Binafy\LaravelReaction\Enums\LaravelReactionTypeEnum;
+use App\Notifications\ReactNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class ReactionController
 {
@@ -17,8 +18,9 @@ class ReactionController
         $post = Post::findOrFail($postId);
         $user = auth()->user();
 
-        $user->reaction($request->type, $post);
-
+        $user->reaction($request->type,$post );
+        $reactType = $request->type;
+        Notification::send($post->user, new ReactNotification($post , $reactType));
         return response()->json([
             'message' => 'Reaction added successfully',
             'reaction' => $request->type,

@@ -1,16 +1,18 @@
 <?php
 
-use App\Http\Controllers\V1\CommentController;
-use App\Http\Controllers\V1\PostController;
 use App\Http\Controllers\V1\Auth\AuthController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\V1\Auth\SocialiteMediaController;
-use App\Http\Controllers\V1\TagController;
-use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\Auth\ForgetPasswordController;
-use App\Http\Controllers\V1\UserRelationshipController;
+use App\Http\Controllers\V1\Auth\SocialiteMediaController;
+use App\Http\Controllers\V1\CommentController;
 use App\Http\Controllers\V1\FollowersController;
-use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\V1\PostController;
+use App\Http\Controllers\V1\ProfileController;
+use App\Http\Controllers\V1\ReactionController;
+use App\Http\Controllers\V1\SavedPostController;
+use App\Http\Controllers\V1\TagController;
+use App\Http\Controllers\V1\UserRelationshipController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\NotificationController;
 
 Route::prefix('v1')->group(function () {
 
@@ -48,6 +50,8 @@ Route::prefix('v1')->group(function () {
             Route::get('posts/{post}/tags', 'postsTags');
             Route::post('posts/{post}/tags', 'attachTags');
             Route::delete('posts/{post}/tags/{tag}', 'detachTag');
+            Route::get('posts/{post}/tags-list', 'postsTagsList');
+            Route::get('posts/{post}/comments', 'postComments');
         });
         Route::apiResource('posts', PostController::class);
 
@@ -93,6 +97,22 @@ Route::prefix('v1')->group(function () {
             Route::get('posts/{post}/reactors', 'getReactors');
             Route::get('posts/{post}/my-reaction', 'myReaction');
             Route::get('posts/{post}/reactions-count', 'reactionCounts');
+        });
+
+        Route::controller(SavedPostController::class)->group(function () {
+            Route::get('saved-posts', 'index');
+            Route::post('saved-posts/{post}', 'store');
+            Route::delete('saved-posts/{post}', 'destroy');
+        });
+
+        Route::controller(NotificationController::class)->group(function () {
+            Route::get('notifications', 'showNewCommentNotify');
+            Route::post('notifications/mark-as-read', 'makeAllRead');
+            Route::get('notifications/all', 'showAllNotifications');
+            Route::delete('notifications/clear', 'clearAllNotifications');
+            Route::post('notifications/{notification}/mark-as-read', 'makeAsRead');
+
+            Route::get('notifications/reacts', 'showNewReactNotify');
         });
     });
 });

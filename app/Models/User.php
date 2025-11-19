@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Observers\UserObserver;
 use Binafy\LaravelReaction\Traits\Reactor;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, softDeletes , Reactor;
+    use HasFactory, Notifiable, softDeletes, Reactor;
 
     public function getJWTIdentifier()
     {
@@ -106,5 +105,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(User::class, 'followers', 'following_id', 'follower_id')
             ->withTimestamps();
+    }
+
+    public function savedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'saved_posts')
+            ->withTimestamps()
+            ->using(\Illuminate\Database\Eloquent\Relations\Pivot::class);
     }
 }

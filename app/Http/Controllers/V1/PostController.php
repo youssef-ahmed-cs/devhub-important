@@ -26,10 +26,10 @@ class PostController extends Controller
         ]);
     }
 
-    public function postComments()
+    public function postComments(Post $post)
     {
         $this->authorize('viewAny', Post::class);
-        $posts = Post::with('comments')->get();
+        $posts = $post->load('comments');
         return response()->json([
             'data' => $posts
         ]);
@@ -77,8 +77,12 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $this->authorize('view', $post);
-
-        return response()->json(['data' => new PostResource($post)]);
+        visits($post)->increment();
+        $views = visits($post)->count();
+        return response()->json([
+            'data' => new PostResource($post),
+            'views' => $views
+        ]);
     }
 
     public function update(PostUpdateRequest $request, Post $post)
@@ -129,6 +133,16 @@ class PostController extends Controller
 
         return response()->json([
             'data' => new PostCollection($posts)
+        ]);
+    }
+
+    public function postsTagsList(Post $post)
+    {
+        $this->authorize('viewAny', $post);
+        $tags = Tag::has('posts')->withCount('posts')->get();
+
+        return response()->json([
+            'data' => $tags
         ]);
     }
 

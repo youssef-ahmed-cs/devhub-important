@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model implements HasReaction
 {
-    use HasApiTokens, HasFactory, AuthorizesRequests, Searchable, SoftDeletes, Reactable ;
+    use HasApiTokens, HasFactory, AuthorizesRequests, Searchable, SoftDeletes, Reactable;
 
     protected $table = 'posts';
     protected $fillable = [
@@ -52,6 +52,17 @@ class Post extends Model implements HasReaction
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'post_tags', 'post_id', 'tag_id')
+            ->withTimestamps();
+    }
+
+    public function visits()
+    {
+        return visits($this)->relation();
+    }
+
+    public function savedBy()
+    {
+        return $this->belongsToMany(User::class, 'saved_posts')
             ->withTimestamps();
     }
 }

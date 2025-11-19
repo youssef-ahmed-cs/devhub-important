@@ -6,7 +6,10 @@ use App\Http\Requests\CommentsRequests\StoreCommentRequest;
 use App\Http\Requests\CommentsRequests\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
+use App\Models\Post;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Notification;
 
 class CommentController
 {
@@ -27,7 +30,12 @@ class CommentController
         $validated = $request->validated();
         $validated['user_id'] = auth()->id();
 
+        $post = Post::with('user')->findOrFail($validated['post_id']);
         $comment = Comment::create($validated);
+
+//        if ($post->user && $post->user->id !== $validated['user_id']) {
+            Notification::send($post->user, new NewCommentNotification($comment));
+//        }
 
         return response()->json([
             'message' => "Comment created successfully",
