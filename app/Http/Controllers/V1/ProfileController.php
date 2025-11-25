@@ -29,8 +29,8 @@ class ProfileController
     {
         $validated = $request->validated();
 
-        if ($validated->hasFile('avatar_url')) {
-            $image = $validated->file('avatar_url');
+        if ($request->hasFile('avatar_url')) {
+            $image = $request->file('avatar_url');
             $extension = $image->getClientOriginalExtension();
             $slug = isset($validated['name']) ? str($validated['name'])->slug() : str(auth()->user()->name ?? auth()->user()->username)->slug();
             $filename = $slug . '-' . time() . '.' . $extension;
@@ -40,7 +40,7 @@ class ProfileController
 
         $user = auth()->user();
         $user->update($validated);
-        $user->refresh();
+        $user->refresh(); // Refresh the user instance to get the latest data
 
         return response()->json([
             'message' => 'Profile updated successfully',

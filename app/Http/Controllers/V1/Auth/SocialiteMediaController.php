@@ -13,9 +13,9 @@ class SocialiteMediaController
     public function login(): JsonResponse
     {
         $redirectUrl = Socialite::driver('google')
-            ->stateless()
-            ->redirect()
-            ->getTargetUrl();
+            ->stateless() // Use stateless to avoid session issues in API
+            ->redirect() // Get the redirect response
+            ->getTargetUrl(); // Extract the target URL
 
         return response()->json([
             'url' => $redirectUrl

@@ -14,7 +14,6 @@ class SearchPostResource extends JsonResource
         return [
             'title' => $this->title,
             'content' => $this->content,
-            'slug' => $this->slug,
         ];
     }
 }

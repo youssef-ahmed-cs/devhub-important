@@ -72,7 +72,7 @@ Route::prefix('v1')->group(function () {
 
         Route::controller(ProfileController::class)->group(function () {
             Route::get('profile', 'show');
-            Route::patch('profile', 'update');
+            Route::put('profile', 'update');
             Route::delete('profile', 'delete');
             Route::delete('profile/force', 'forceDelete');
             Route::get('profile/user/posts', 'userPosts');

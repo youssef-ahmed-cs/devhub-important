@@ -13,7 +13,7 @@ class ProfileRequest extends FormRequest
             'username' => 'sometimes|string|max:255|alpha_dash|unique:users,username,' . auth()->id(),
             'bio' => 'sometimes|nullable|string',
             'email' => 'sometimes|email|max:255|unique:users,email,' . auth()->id(),
-            'avatar_url' => 'sometimes|file|image|max:2048',
+            'avatar_url' => 'sometimes|max:2048|image|mimes:jpeg,png,jpg,gif,svg',
         ];
     }
 

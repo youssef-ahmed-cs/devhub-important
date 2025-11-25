@@ -33,9 +33,8 @@ class CommentController
         $post = Post::with('user')->findOrFail($validated['post_id']);
         $comment = Comment::create($validated);
 
-//        if ($post->user && $post->user->id !== $validated['user_id']) {
-            Notification::send($post->user, new NewCommentNotification($comment));
-//        }
+        Notification::send($post->user, new NewCommentNotification($comment));
+
 
         return response()->json([
             'message' => "Comment created successfully",

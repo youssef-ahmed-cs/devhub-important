@@ -118,9 +118,10 @@ class PostController extends Controller
     public function search(Request $request, Post $post)
     {
         $this->authorize('search', $post);
-        $query = $request->input('query'); // take data from query parameter 'query'
-        $results = $post->search($query)->get();
+        $query = $request->input('query');
+        $results = $post->search($query)->take(10)->get();
         if ($results->isEmpty()) {
+            Log::error('No posts found matching the search criteria: ' . $query);
             return response()->json(['message' => 'No posts found matching the search criteria.'], 404);
         }
         return SearchPostResource::collection($results);
